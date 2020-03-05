@@ -61,9 +61,7 @@ public class Player : MonoBehaviour
         if(sp.IsOpen)
         {
         try
-        {
-
-          
+        {         
             if (sp.ReadByte() == 1 && Time.time > nextFire)
             {
                 Shoot();
@@ -76,6 +74,7 @@ public class Player : MonoBehaviour
             {
                 cam.transform.Rotate(Vector3.up, turretRotateSpeed * Time.deltaTime);
             }
+
         } catch (System.Exception) { }
 
         }
