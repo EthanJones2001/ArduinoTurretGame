@@ -1,11 +1,13 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-//using System.IO.Ports;
+using System.IO.Ports;
 using System;
 using System.Collections;
 
 public class Player : MonoBehaviour
 {
+    SerialPort sp = new SerialPort("COM3", 9600);
+
     [SerializeField]
     private Transform shootPoint;
     [SerializeField]
@@ -23,7 +25,7 @@ public class Player : MonoBehaviour
     public GameObject playerOne;
     public GameObject playerTwo;
     public bool controllerActive = false;
-    public int commPort = 0;
+ //   public int commPort = 0;
 
   //  private SerialPort serial = null;
     private bool connected = false;
@@ -32,6 +34,9 @@ public class Player : MonoBehaviour
 
     void Start()
     {
+        sp.Open();
+        sp.ReadTimeout = 1;
+
         cam = GetComponentInChildren<Camera>();
     }
     /*
@@ -53,18 +58,26 @@ public class Player : MonoBehaviour
         */
     void Update()
     {
-        
-        if (Input.GetButton("Fire1") && Time.time > nextFire)
-        {            
-            Shoot();
-        }
-        else if(Input.GetKey(KeyCode.LeftArrow))
+        if(sp.IsOpen)
         {
-            cam.transform.Rotate(Vector3.down, turretRotateSpeed * Time.deltaTime);
-        }
-        else if (Input.GetKey(KeyCode.RightArrow))
+        try
         {
-            cam.transform.Rotate(Vector3.up, turretRotateSpeed * Time.deltaTime);
+
+          
+            if (sp.ReadByte() == 1 && Time.time > nextFire)
+            {
+                Shoot();
+            }
+            else if (Input.GetKey(KeyCode.LeftArrow))
+            {
+                cam.transform.Rotate(Vector3.down, turretRotateSpeed * Time.deltaTime);
+            }
+            else if (Input.GetKey(KeyCode.RightArrow))
+            {
+                cam.transform.Rotate(Vector3.up, turretRotateSpeed * Time.deltaTime);
+            }
+        } catch (System.Exception) { }
+
         }
 
     }
